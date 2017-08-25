@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+"use strict";
+
+if(process.argv.length < 3) {
+	help();
+}
+
+function help() {
+	console.log("Rest API client for GLPI");
+	console.log("");
+	console.log("usage: restclient http://127.0.0.1/glpi/restapi.php [endpoint] [method]");
+	console.log("");
+	console.log("endpoint           an endpoint supported by GLPI (ie: Computer, Search, initSession)");
+	console.log("");
+	console.log("method             the HTTP method (sometimes called verb) to use. Can be get put post or delete");
+	console.log("");
+};

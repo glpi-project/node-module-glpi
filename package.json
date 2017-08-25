@@ -1,0 +1,26 @@
+{
+  "author": "Thierry Bugier <tbugier@teclib.com>",
+  "name": "@teclib/glpi",
+  "description": "API client for GLPI",
+  "version": "0.1.0",
+  "license": "GPL-3.0",
+  "repository": {
+	"type": "git",
+    "url": "git://github.com/btry/node-module-glpi"
+  },
+  "main": "./lib/restclient",
+  "keywords": [
+    "GLPI",
+    "rest",
+    "xmlrpc",
+    "api",
+    "client"
+  ],
+  "bin": {
+    "glpi-api": "./bin/glpi-api"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
