@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict'
 
 if(process.argv.length < 3) {
-	help();
+	help()
 }
 
 function help() {
