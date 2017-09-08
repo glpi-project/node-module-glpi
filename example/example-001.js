@@ -1,11 +1,13 @@
 'use strict'
 
-const http = require('http')
-const glpiRestClient = require('../lib/restclient')
+const GlpiRestClient = require('../lib/restclient')
 
-var client = new glpiRestClient(http, 'http://localhost/~dethegeek/glpi-flyvemdm-92/apirest.php')
+var client = new GlpiRestClient('http://localhost/~dethegeek/glpi-flyvemdm-92/apirest.php')
 
-client.initSessionByCredentials('glpi', 'glpi')
+client.initSessionByCredentials('glpi', 'glpi').then(() => {
+	console.log('Logged in !')
+	//var computer = client.getAnItem('computer', 1)
+})
 
 /*
 var computer = client.getAnItem('computer', 1)
