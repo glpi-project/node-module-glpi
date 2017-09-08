@@ -1,15 +1,17 @@
 'use strict'
 
 const http = require('http')
-const glpiRestClient = require('glpiRestClient')
+const glpiRestClient = require('../lib/restclient')
 
-client = new glpiRestClient(new http, 'http://localhost/glpi/apirest.php')
+var client = new glpiRestClient(http, 'http://localhost/~dethegeek/glpi-flyvemdm-92/apirest.php')
 
-client.initSessionByCredentials('glpi', 'glpi');
+client.initSessionByCredentials('glpi', 'glpi')
 
-computer = client.getAnItem('computer', 1)
-computers = client.getMultipleItems([
+/*
+var computer = client.getAnItem('computer', 1)
+var computers = client.getMultipleItems([
 	{"itemtype": "computer", "id": 1},
 	{"itemtype": "computer", "id": 3},
 	{"itemtype": "computer", "id": 4}
 ])
+*/
