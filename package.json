@@ -1,10 +1,10 @@
 {
-  "name": "glpi-library-ios",
+  "name": "node-module-glpi",
   "version": "1.0.0",
   "description": "Branch created with the intention of functioning as an introduction web site of the project, a small point of entry where anyone can find out what it is about and to be able to get relevant information.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flyve-mdm/glpi-library-ios.git"
+    "url": "git+https://github.com/flyve-mdm/node-module-glpi.git"
   },
   "sasslintConfig": ".sass-lint.yml",
   "scripts": {
@@ -18,9 +18,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/flyve-mdm/glpi-library-ios/issues"
+    "url": "https://github.com/flyve-mdm/node-module-glpi/issues"
   },
-  "homepage": "https://github.com/flyve-mdm/glpi-library-ios#readme",
+  "homepage": "https://github.com/flyve-mdm/node-module-glpi#readme",
   "devDependencies": {
     "eslint": "^4.7.2",
     "eslint-config-google": "^0.9.1",
