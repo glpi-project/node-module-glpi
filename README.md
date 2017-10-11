@@ -1,4 +1,4 @@
-# GLPi node module
+# GLPI node module
 
 ![Flyve MDM banner](https://user-images.githubusercontent.com/663460/26935464-54267e9c-4c6c-11e7-86df-8cfa6658133e.png)
 
