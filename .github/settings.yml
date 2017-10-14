@@ -2,6 +2,7 @@ repository:
   name: node-module-glpi
   description: Node client to interact with GLPI API REST
   homepage: http://flyve.org/node-module-glpi/
+  topics: node-module, glpi-api
   private: false
   has_issues: true
   has_wiki: false
