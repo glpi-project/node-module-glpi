@@ -23,6 +23,17 @@ To get started, check out [Flyve MDM website](https://flyve-mdm.com/)!
 
 ## Synopsis
 
+Node Client interacts with GLPI webservices plugin, it features several functionalities common to all GLPI APIs, for example:
+
+- HTTP transport to APIs.
+- Error handling 
+- Authentication
+- JSON parsing
+- Media download/upload
+- Batching.
+
+You will be able to call to all the methods that belong to the [GLPI REST API](https://dev.flyve.org/glpi/apirest.php), for more information visit the [projects website](http://flyve.org/node-module-glpi/).
+
 This project is a **work in progress**. The information here provided could change at any given time.
 
 ## Build Status
