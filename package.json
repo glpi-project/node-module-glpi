@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "license": "GPL-3.0",
   "repository": {
-	"type": "git",
+    "type": "git",
     "url": "git://github.com/btry/node-module-glpi"
   },
   "main": "./lib/restclient",
@@ -19,8 +19,17 @@
   "bin": {
     "glpi-api": "./bin/glpi-api"
   },
-  "dependencies": {},
+  "dependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1"
+  },
   "engines": {
     "node": "*"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.1"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
