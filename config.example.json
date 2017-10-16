@@ -1,0 +1,7 @@
+{
+    "apirest": "http://example.com/glpi/apirest.php",
+    "user": {
+        "name": "exampleName",
+        "password": "examplePassword"
+    }
+}
