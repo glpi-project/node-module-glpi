@@ -40,7 +40,7 @@ This project is a **work in progress**. The information here provided could chan
 
 |**Release channel**|Beta Channel|
 |:---:|:---:|
-|||
+|[![Travis CI build](https://api.travis-ci.org/flyve-mdm/node-module-glpi.svg?branch=master)](https://travis-ci.org/flyve-mdm/node-module-glpi)|[![Travis CI build](https://api.travis-ci.org/flyve-mdm/node-module-glpi.svg?branch=develop)](https://travis-ci.org/flyve-mdm/node-module-glpi)|
 
 ## Documentation
 
