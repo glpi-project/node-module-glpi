@@ -19,3 +19,11 @@ describe('initSessionByCredentials()', function() {
   })
 })
 
+describe('initSessionByUserToken()', function() {
+  this.timeout(15000)
+  it('successful login', async () => {
+    const client = new GlpiRestClient(config.apirest)
+    const result = await client.initSessionByUserToken(config.user.userToken)
+    assert.deepInclude(result, { "status": 200 })
+  })
+})
