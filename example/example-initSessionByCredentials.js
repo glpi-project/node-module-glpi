@@ -5,7 +5,7 @@ const config = require('../config.json')
 
 const client = new GlpiRestClient(config.apirest)
 
-client.initSessionByCredentials(config.user.name, config.user.password)
+client.initSessionByCredentials(config.user.name, config.user.password, config.user.password)
 	.then((res) => {
 		console.log(res)
 	})
