@@ -16,5 +16,8 @@ jobs:
           paths:
             - ./node_modules
       - run:
+          name: generate a configuration file
+          command: ci/create-config-file.sh
+      - run:
           name: test
           command: npm test
