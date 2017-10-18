@@ -113,3 +113,18 @@ describe('getFullSession()', function() {
       })
   })
 })
+
+describe('getGlpiConfig()', function() {
+  this.timeout(15000)
+  it('get gpli configuration successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByUserToken(config.user.userToken)
+      .then(function() {
+        client.getGlpiConfig()
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
