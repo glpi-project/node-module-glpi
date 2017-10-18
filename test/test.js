@@ -24,7 +24,7 @@ describe('initSessionByUserToken()', function() {
   })
 })
 
-describe('initSessionByUserToken()', function() {
+describe('killSession()', function() {
   this.timeout(15000)
   it('log out successfully', () => {
     const client = new GlpiRestClient(config.apirest)
@@ -61,7 +61,22 @@ describe('getActiveProfile()', function() {
 
     return client.initSessionByUserToken(config.user.userToken)
       .then(function() {
-        client.getMyProfiles()
+        client.getActiveProfile()
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
+
+describe('getMyEntities()', function() {
+  this.timeout(15000)
+  it('get my entities successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByUserToken(config.user.userToken)
+      .then(function() {
+        client.getMyEntities()
           .then((result) => {
             assert.deepInclude(result, { "status": 200 })
           })
