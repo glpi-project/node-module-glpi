@@ -23,3 +23,12 @@ describe('initSessionByUserToken()', function() {
     assert.deepInclude(result, { "status": 200 })
   })
 })
+
+describe('initSessionByUserToken()', function() {
+  this.timeout(15000)
+  it('log out successfully', async () => {
+    const client = new GlpiRestClient(config.apirest)
+    await client.initSessionByUserToken(config.user.userToken)
+    assert.equal(client.killSession(), 'User logout successfully')
+  })
+})
