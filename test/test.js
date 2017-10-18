@@ -83,3 +83,18 @@ describe('getMyEntities()', function() {
       })
   })
 })
+
+describe('getActiveEntities()', function() {
+  this.timeout(15000)
+  it('get active entities successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByUserToken(config.user.userToken)
+      .then(function() {
+        client.getActiveEntities()
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
