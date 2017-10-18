@@ -98,3 +98,18 @@ describe('getActiveEntities()', function() {
       })
   })
 })
+
+describe('getFullSession()', function() {
+  this.timeout(15000)
+  it('get full session successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByUserToken(config.user.userToken)
+      .then(function() {
+        client.getFullSession()
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
