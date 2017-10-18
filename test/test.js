@@ -38,3 +38,18 @@ describe('initSessionByUserToken()', function() {
       })
   })
 })
+
+describe('getMyProfiles()', function() {
+  this.timeout(15000)
+  it('get my profiles successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByUserToken(config.user.userToken)
+      .then(function() {
+        client.getMyProfiles()
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
