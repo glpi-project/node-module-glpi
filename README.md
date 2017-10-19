@@ -4,12 +4,13 @@
 
 [![License](https://img.shields.io/github/license/flyve-mdm/flyve-mdm-android-inventory-agent.svg?&label=License)](https://github.com/flyve-mdm/node-module-glpi/blob/develop/LICENSE.md)
 [![Follow twitter](https://img.shields.io/twitter/follow/FlyveMDM.svg?style=social&label=Twitter&style=flat-square)](https://twitter.com/FlyveMDM)
+![Project Status: WIP](http://www.repostatus.org/badges/latest/wip.svg)
 [![Telegram Group](https://img.shields.io/badge/Telegram-Group-blue.svg)](https://t.me/flyvemdm)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-Flyve MDM is a mobile device management software that enables you to secure and manage all the mobile devices of your business via a unique web-based console (MDM).
+GLPI (_Gestionnaire Libre de Parc Informatique_) is a free IT Asset Management, issue tracking system and service desk solution. This open source software is written in PHP.
 
-To get started, check out [Flyve MDM website](https://flyve-mdm.com/)!
+It helps companies to manage their information system, since it's able to build an inventory of all the organization's assets and to manage administrative and financial tasks.
 
 ## Table of Contents
 
@@ -33,8 +34,6 @@ Node Client interacts with GLPI webservices plugin, it features several function
 - Batching.
 
 You will be able to call to all the methods that belong to the [GLPI REST API](https://dev.flyve.org/glpi/apirest.php), for more information visit the [projects website](http://flyve.org/node-module-glpi/).
-
-This project is a **work in progress**. The information here provided could change at any given time.
 
 ## Build Status
 
