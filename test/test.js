@@ -3,6 +3,7 @@ const expect  = require("chai").expect
 
 const GlpiRestClient = require('../lib/restclient')
 const config = require('../config.json')
+const itemtype = require('../lib/itemtype')
 
 // var client = new GlpiRestClient('http://localhost/~dethegeek/glpi-flyvemdm-92/apirest.php')
 
@@ -122,6 +123,21 @@ describe('getGlpiConfig()', function() {
     return client.initSessionByUserToken(config.user.userToken)
       .then(function() {
         client.getGlpiConfig()
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
+
+describe('getAllItems()', function() {
+  this.timeout(15000)
+  it('get all items of a type successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByUserToken(config.user.userToken)
+      .then(function() {
+        client.getAllItems(itemtype.User)
           .then((result) => {
             assert.deepInclude(result, { "status": 200 })
           })
