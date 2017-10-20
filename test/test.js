@@ -30,7 +30,7 @@ describe('killSession()', function() {
   it('log out successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.killSession()
           .then((result) => {
@@ -45,7 +45,7 @@ describe('getMyProfiles()', function() {
   it('get my profiles successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getMyProfiles()
           .then((result) => {
@@ -60,7 +60,7 @@ describe('getActiveProfile()', function() {
   it('get active profile successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getActiveProfile()
           .then((result) => {
@@ -75,7 +75,7 @@ describe('getMyEntities()', function() {
   it('get my entities successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getMyEntities()
           .then((result) => {
@@ -90,7 +90,7 @@ describe('getActiveEntities()', function() {
   it('get active entities successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getActiveEntities()
           .then((result) => {
@@ -105,7 +105,7 @@ describe('getFullSession()', function() {
   it('get full session successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getFullSession()
           .then((result) => {
@@ -120,7 +120,7 @@ describe('getGlpiConfig()', function() {
   it('get gpli configuration successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getGlpiConfig()
           .then((result) => {
@@ -135,7 +135,7 @@ describe('getAllItems()', function() {
   it('get all items of a type successfully', () => {
     const client = new GlpiRestClient(config.apirest)
 
-    return client.initSessionByUserToken(config.user.userToken)
+    return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getAllItems(itemtype.User)
           .then((result) => {
