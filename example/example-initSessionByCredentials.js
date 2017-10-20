@@ -3,7 +3,7 @@ const config = require('../config.json')
 
 const client = new GlpiRestClient(config.apirest)
 
-client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+client.initSessionByCredentials(config.user.name, config.user.passwords, config.appToken)
 	.then((res) => {
 		console.log(res)
 	})
