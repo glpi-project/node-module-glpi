@@ -144,3 +144,18 @@ describe('getAllItems()', function() {
       })
   })
 })
+
+describe('getAnItem()', function() {
+  this.timeout(15000)
+  it('get an item of a type successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.getAnItem(itemtype.User, 2)
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
