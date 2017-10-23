@@ -6,8 +6,7 @@ const client = new GlpiRestClient(config.apirest)
 
 client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
 	.then((res) => {
-		console.log(res)
-		client.getAllItems(itemtype.User)
+		client.getAnItem(itemtype.User, 40)
 			.then((res2) => {
 				console.log(res2)
 			})
