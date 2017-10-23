@@ -33,7 +33,7 @@ client.initSessionByCredentials(config.user.name, config.user.password, config.a
 		client.addItem(itemtype.UserEmail ,{users_id: 37, email: 'example@email.com'})
 		.then((res2) => {
 			console.log(res2)
-			client.deleteItem(itemtype.UserEmail, res2.data.id, {users_id: 37, email: 'example@email.com'})
+			client.deleteItem(itemtype.UserEmail, null, {id: res2.data.id, users_id: 37, email: 'example@email.com'})
 				.then((res2) => {
 					console.log(res2)
 				})
