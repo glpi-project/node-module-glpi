@@ -265,3 +265,18 @@ describe('changeActiveProfile()', function() {
       })
   })
 })
+
+describe('changeActiveEntities()', function() {
+  this.timeout(15000)
+  it('change active entities successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.changeActiveEntities()
+          .then((result16) => {
+            assert.deepInclude(result16, { "status": 200 })
+          })
+      })
+  })
+})
