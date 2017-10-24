@@ -44,8 +44,8 @@ describe('initSessionByUserToken()', function() {
   this.timeout(15000)
   it('successful login', async () => {
     const client = new GlpiRestClient(config.apirest)
-    const result = await client.initSessionByUserToken(config.user.userToken)
-    assert.deepInclude(result, { "status": 200 })
+    const result1 = await client.initSessionByUserToken(config.user.userToken)
+    assert.deepInclude(result1, { "status": 200 })
   })
 })
 
@@ -57,8 +57,8 @@ describe('killSession()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.killSession()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result2) => {
+            assert.deepInclude(result2, { "status": 200 })
           })
       })
   })
@@ -72,8 +72,8 @@ describe('getMyProfiles()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getMyProfiles()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result3) => {
+            assert.deepInclude(result3, { "status": 200 })
           })
       })
   })
@@ -87,8 +87,8 @@ describe('getActiveProfile()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getActiveProfile()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result4) => {
+            assert.deepInclude(result4, { "status": 200 })
           })
       })
   })
@@ -102,8 +102,8 @@ describe('getMyEntities()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getMyEntities()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result5) => {
+            assert.deepInclude(result5, { "status": 200 })
           })
       })
   })
@@ -117,8 +117,8 @@ describe('getActiveEntities()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getActiveEntities()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result6) => {
+            assert.deepInclude(result6, { "status": 200 })
           })
       })
   })
@@ -132,8 +132,8 @@ describe('getFullSession()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getFullSession()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result7) => {
+            assert.deepInclude(result7, { "status": 200 })
           })
       })
   })
@@ -147,8 +147,8 @@ describe('getGlpiConfig()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getGlpiConfig()
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result8) => {
+            assert.deepInclude(result8, { "status": 200 })
           })
       })
   })
@@ -162,8 +162,8 @@ describe('getAllItems()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getAllItems(itemtype.User)
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result9) => {
+            assert.deepInclude(result9, { "status": 200 })
           })
       })
   })
@@ -177,8 +177,8 @@ describe('getAnItem()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getAnItem(itemtype.User, 2)
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result10) => {
+            assert.deepInclude(result10, { "status": 200 })
           })
       })
   })
@@ -193,8 +193,26 @@ describe('getSubItems()', function() {
     return client.initSessionByCredentials(config.user.name, config.user.password)
       .then(function() {
         client.getSubItems(itemtype.User, 37, itemtype.UserEmail)
-          .then((result) => {
-            assert.deepInclude(result, { "status": 200 })
+          .then((result11) => {
+            assert.deepInclude(result11, { "status": 200 })
+          })
+      })
+  })
+})
+
+let idItem = null
+
+describe('addItem()', function() {
+  this.timeout(15000)
+  it('add item successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.addItem(itemtype.UserEmail ,{users_id: 37, email: 'example@email.com'})
+          .then((result12) => {
+            idItem = result12.data.id
+            assert.deepInclude(result12, { "status": 200 })
           })
       })
   })
