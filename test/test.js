@@ -232,3 +232,18 @@ describe('updateItem()', function() {
       })
   })
 })
+
+describe('deleteItem()', function() {
+  this.timeout(15000)
+  it('delete item successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.deleteItem(itemtype.UserEmail, null, {id: idItem, users_id: 37, email: 'example2@email.com'})
+          .then((result14) => {
+            assert.deepInclude(result14, { "status": 200 })
+          })
+      })
+  })
+})
