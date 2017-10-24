@@ -280,3 +280,18 @@ describe('changeActiveEntities()', function() {
       })
   })
 })
+
+describe('resetPasswordRequest()', function() {
+  this.timeout(15000)
+  it('reset password request successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.resetPasswordRequest(config.user.name)
+          .then((result17) => {
+            assert.deepInclude(result17, { "status": 200 })
+          })
+      })
+  })
+})
