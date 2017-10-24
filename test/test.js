@@ -217,3 +217,18 @@ describe('addItem()', function() {
       })
   })
 })
+
+describe('updateItem()', function() {
+  this.timeout(15000)
+  it('update item successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.updateItem(itemtype.UserEmail, null, {id: idItem, users_id: 37, email: 'example2@email.com'})
+          .then((result10) => {
+            assert.deepInclude(result10, { "status": 200 })
+          })
+      })
+  })
+})
