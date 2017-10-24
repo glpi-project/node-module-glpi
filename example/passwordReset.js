@@ -27,7 +27,7 @@ const config = require('../config.json')
 
 const client = new GlpiRestClient(config.apirest)
 
-client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+client.passwordReset(config.user.name, "e446c1ff23d7ba097cc7104edaee5139ddf610be", 12345678)
 	.then((res) => {
 		console.log(res)
 	})
