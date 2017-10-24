@@ -183,3 +183,19 @@ describe('getAnItem()', function() {
       })
   })
 })
+
+
+describe('getSubItems()', function() {
+  this.timeout(15000)
+  it('get sub items successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.getSubItems(itemtype.User, 37, itemtype.UserEmail)
+          .then((result) => {
+            assert.deepInclude(result, { "status": 200 })
+          })
+      })
+  })
+})
