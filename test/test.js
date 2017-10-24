@@ -247,3 +247,21 @@ describe('deleteItem()', function() {
       })
   })
 })
+
+describe('changeActiveProfile()', function() {
+  this.timeout(15000)
+  it('change active profile successfully', () => {
+    const client = new GlpiRestClient(config.apirest)
+
+    return client.initSessionByCredentials(config.user.name, config.user.password)
+      .then(function() {
+        client.getMyProfiles()
+          .then((result15) => {
+            client.changeActiveProfile(result15.data[0].id)
+              .then((result15_2) => {
+                assert.deepInclude(result15_2, { "status": 200 })
+              })
+          })
+      })
+  })
+})
