@@ -49,6 +49,47 @@ You will be able to call to all the methods that belong to the [GLPI REST API](h
 |:----|----|----|----|---|---|---|
 |**GLPI API Client**|||||||
 
+## Example with promises
+
+``` js
+    const client = new GlpiRestClient(config.apirest)
+
+    client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+        .then((res) => {
+            client.getActiveProfile()
+                .then((res2) => {
+                    console.log(res2)
+                    client.killSession()
+                        .catch((err3) => {
+                            console.log(err3)
+                        })
+                })
+                .catch((err2) => {
+                    console.log(err2)
+                })
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+```
+
+## Example with async/await
+
+``` js
+    (async () => {
+        try {
+            const client = new GlpiRestClient(config.apirest);
+            await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken);
+            const ActiveProfile = await client.getActiveProfile();
+            console.log(ActiveProfile);
+            await client.killSession();
+        }
+        catch (err) {
+            console.log(err);
+        }
+    })();
+```
+
 ## Documentation
 
 We maintain a detailed documentation of the project in the [project's website](https://glpi-project.github.io/node-module-glpi/).
