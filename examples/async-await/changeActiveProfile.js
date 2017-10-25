@@ -22,19 +22,18 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../../lib/restclient');
+const GlpiRestClient = require('../../lib/restclient')
 const config = require('../../config.json');
 
 (async () => {
-	try {
-		const client = new GlpiRestClient(config.apirest);
-		await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken);
-		const MyProfiles = await client.getMyProfiles();
-		const ChangeActiveProfile = await client.changeActiveProfile(MyProfiles.data[0].id);
-		console.log(ChangeActiveProfile);
-		await client.killSession();
-	}
-	catch (err) {
-		console.log(err);
-	}
-})();
+    try {
+        const client = new GlpiRestClient(config.apirest)
+        await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+        const MyProfiles = await client.getMyProfiles()
+        const ChangeActiveProfile = await client.changeActiveProfile(MyProfiles.data[0].id)
+        console.log(ChangeActiveProfile)
+        await client.killSession()
+    } catch (err) {
+        console.log(err)
+    }
+})()

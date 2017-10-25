@@ -22,18 +22,17 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../../lib/restclient');
+const GlpiRestClient = require('../../lib/restclient')
 const config = require('../../config.json');
 
 (async () => {
-	try {
-		const client = new GlpiRestClient(config.apirest);
-		await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken);
-		const ActiveEntities = await client.getActiveEntities();
-		console.log(ActiveEntities);
-		await client.killSession();
-	}
-	catch (err) {
-		console.log(err);
-	}
-})();
+    try {
+        const client = new GlpiRestClient(config.apirest)
+        await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+        const ActiveEntities = await client.getActiveEntities()
+        console.log(ActiveEntities)
+        await client.killSession()
+    } catch (err) {
+        console.log(err)
+    }
+})()
