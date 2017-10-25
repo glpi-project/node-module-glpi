@@ -22,16 +22,15 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../../lib/restclient');
+const GlpiRestClient = require('../../lib/restclient')
 const config = require('../../config.json');
 
 (async () => {
-	try {
-		const client = new GlpiRestClient(config.apirest);
-		const ResetPasswordRequest = await client.resetPasswordRequest(config.user.email);
-		console.log(ResetPasswordRequest);
-	}
-	catch (err) {
-		console.log(err);
-	}
-})();
+    try {
+        const client = new GlpiRestClient(config.apirest)
+        const ResetPasswordRequest = await client.resetPasswordRequest(config.user.email)
+        console.log(ResetPasswordRequest)
+    } catch (err) {
+        console.log(err)
+    }
+})()
