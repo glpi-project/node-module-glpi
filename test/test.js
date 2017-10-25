@@ -31,267 +31,200 @@ const itemtype = require('../lib/itemtype')
 
 // var client = new GlpiRestClient('http://localhost/~dethegeek/glpi-flyvemdm-92/apirest.php')
 
-describe('initSessionByCredentials()', function() {
+describe('initSessionByCredentials()', function () {
   this.timeout(15000)
   it('successful login', async () => {
     const client = new GlpiRestClient(config.apirest)
     const result = await client.initSessionByCredentials(config.user.name, config.user.password)
+    await client.killSession()
     assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('initSessionByUserToken()', function() {
+describe('initSessionByUserToken()', function () {
   this.timeout(15000)
   it('successful login', async () => {
     const client = new GlpiRestClient(config.apirest)
-    const result1 = await client.initSessionByUserToken(config.user.userToken)
-    assert.deepInclude(result1, { "status": 200 })
+    const result = await client.initSessionByUserToken(config.user.userToken)
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('killSession()', function() {
+describe('killSession()', function () {
   this.timeout(15000)
-  it('log out successfully', () => {
+  it('log out successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.killSession()
-          .then((result2) => {
-            assert.deepInclude(result2, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getMyProfiles()', function() {
+describe('getMyProfiles()', function () {
   this.timeout(15000)
-  it('get my profiles successfully', () => {
+  it('get my profiles successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getMyProfiles()
-          .then((result3) => {
-            assert.deepInclude(result3, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getMyProfiles()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getActiveProfile()', function() {
+describe('getActiveProfile()', function () {
   this.timeout(15000)
-  it('get active profile successfully', () => {
+  it('get active profile successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getActiveProfile()
-          .then((result4) => {
-            assert.deepInclude(result4, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getActiveProfile()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getMyEntities()', function() {
+describe('getMyEntities()', function () {
   this.timeout(15000)
-  it('get my entities successfully', () => {
+  it('get my entities successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getMyEntities()
-          .then((result5) => {
-            assert.deepInclude(result5, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getMyEntities()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getActiveEntities()', function() {
+describe('getActiveEntities()', function () {
   this.timeout(15000)
-  it('get active entities successfully', () => {
+  it('get active entities successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getActiveEntities()
-          .then((result6) => {
-            assert.deepInclude(result6, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getActiveEntities()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getFullSession()', function() {
+describe('getFullSession()', function () {
   this.timeout(15000)
-  it('get full session successfully', () => {
+  it('get full session successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getFullSession()
-          .then((result7) => {
-            assert.deepInclude(result7, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getFullSession()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getGlpiConfig()', function() {
+describe('getGlpiConfig()', function () {
   this.timeout(15000)
-  it('get gpli configuration successfully', () => {
+  it('get gpli configuration successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getGlpiConfig()
-          .then((result8) => {
-            assert.deepInclude(result8, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getGlpiConfig()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getAllItems()', function() {
+describe('getAllItems()', function () {
   this.timeout(15000)
-  it('get all items of a type successfully', () => {
+  it('get all items of a type successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getAllItems(itemtype.User)
-          .then((result9) => {
-            assert.deepInclude(result9, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getAllItems(itemtype.User)
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('getAnItem()', function() {
+describe('getAnItem()', function () {
   this.timeout(15000)
-  it('get an item of a type successfully', () => {
+  it('get an item of a type successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getAnItem(itemtype.User, 2)
-          .then((result10) => {
-            assert.deepInclude(result10, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getAnItem(itemtype.User, 2)
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
 
-describe('getSubItems()', function() {
+describe('getSubItems()', function () {
   this.timeout(15000)
-  it('get sub items successfully', () => {
+  it('get sub items successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getSubItems(itemtype.User, 37, itemtype.UserEmail)
-          .then((result11) => {
-            assert.deepInclude(result11, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.getSubItems(itemtype.User, 40, itemtype.UserEmail)
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
 let idItem = null
 
-describe('addItem()', function() {
+describe('addItem()', function () {
   this.timeout(15000)
-  it('add item successfully', () => {
+  it('add item successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.addItem(itemtype.UserEmail ,{users_id: 37, email: 'example@email.com'})
-          .then((result12) => {
-            idItem = result12.data.id
-            assert.deepInclude(result12, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.addItem(itemtype.UserEmail ,{users_id: 40, email: 'example@email.com'})
+    idItem = result.data.id
+    await client.killSession()
+    assert.deepInclude(result, { "status": 201 })
   })
 })
 
-describe('updateItem()', function() {
+describe('updateItem()', function () {
   this.timeout(15000)
-  it('update item successfully', () => {
+  it('update item successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.updateItem(itemtype.UserEmail, null, {id: idItem, users_id: 37, email: 'example2@email.com'})
-          .then((result10) => {
-            assert.deepInclude(result10, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.updateItem(itemtype.UserEmail, null, {id: idItem, users_id: 40, email: 'example2@email.com'})
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('deleteItem()', function() {
+describe('deleteItem()', function () {
   this.timeout(15000)
-  it('delete item successfully', () => {
+  it('delete item successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.deleteItem(itemtype.UserEmail, null, {id: idItem, users_id: 37, email: 'example2@email.com'})
-          .then((result14) => {
-            assert.deepInclude(result14, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.deleteItem(itemtype.UserEmail, null, {id: idItem, users_id: 40, email: 'example2@email.com'})
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('changeActiveProfile()', function() {
+describe('changeActiveProfile()', function () {
   this.timeout(15000)
-  it('change active profile successfully', () => {
+  it('change active profile successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.getMyProfiles()
-          .then((result15) => {
-            client.changeActiveProfile(result15.data[0].id)
-              .then((result15_2) => {
-                assert.deepInclude(result15_2, { "status": 200 })
-              })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const MyProfiles = await client.getMyProfiles()
+    const result = await client.changeActiveProfile(MyProfiles.data[0].id)
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('changeActiveEntities()', function() {
+describe('changeActiveEntities()', function () {
   this.timeout(15000)
-  it('change active entities successfully', () => {
+  it('change active entities successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.changeActiveEntities()
-          .then((result16) => {
-            assert.deepInclude(result16, { "status": 200 })
-          })
-      })
+    await client.initSessionByCredentials(config.user.name, config.user.password)
+    const result = await client.changeActiveEntities()
+    await client.killSession()
+    assert.deepInclude(result, { "status": 200 })
   })
 })
 
-describe('resetPasswordRequest()', function() {
+describe('resetPasswordRequest()', function () {
   this.timeout(15000)
-  it('reset password request successfully', () => {
+  it('reset password request successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
-
-    return client.initSessionByCredentials(config.user.name, config.user.password)
-      .then(function() {
-        client.resetPasswordRequest(config.user.name)
-          .then((result17) => {
-            assert.deepInclude(result17, { "status": 200 })
-          })
-      })
+    const result = await client.resetPasswordRequest(config.user.email)
+    assert.deepInclude(result, { "status": 200 })
   })
 })
