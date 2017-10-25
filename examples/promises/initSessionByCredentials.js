@@ -22,14 +22,18 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../lib/restclient')
-const config = require('../config.json')
+const GlpiRestClient = require('../../lib/restclient')
+const config = require('../../config.json')
 
 const client = new GlpiRestClient(config.apirest)
 
-client.passwordReset(config.user.name, "e446c1ff23d7ba097cc7104edaee5139ddf610be", 12345678)
+client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
 	.then((res) => {
 		console.log(res)
+		client.killSession()
+			.catch((err2) => {
+				console.log(err2)
+			})
 	})
 	.catch((err) => {
 		console.log(err)

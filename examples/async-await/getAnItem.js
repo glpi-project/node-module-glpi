@@ -23,21 +23,25 @@
 *  -------------------------------------------------------------------- */
 
 const GlpiRestClient = require('../../lib/restclient')
-const config = require('../../config.json')
-const itemtype = require('../../lib/itemtype')
+const config = require('../../config.json');
+const itemtype = require('../../lib/itemtype');
+const getAnItemQuery = require('../../lib/getAnItemQuery');
 
-const client = new GlpiRestClient(config.apirest)
+(async () => {
+	try {
+		const client = new GlpiRestClient(config.apirest);
+		let query = new getAnItemQuery();
+		query.with_networkports = true;
+		query.with_infocoms = true;
+		query.with_contracts = true;
+		query.with_documents = true;
+		await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken);
+		const Item = await client.getAnItem(itemtype.User, 40, query.createQueryObject());
+		console.log(Item);
+		await client.killSession();
+	}
+	catch (err) {
+		console.log(err);
+	}
+})();
 
-client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-	.then((res) => {
-		client.addItem(itemtype.UserEmail ,{users_id: 37, email: 'example@email.com'})
-			.then((res2) => {
-				console.log(res2)
-			})
-			.catch((err2) => {
-				console.log(err2)
-			})
-	})
-	.catch((err) => {
-		console.log(err)
-	})

@@ -22,21 +22,16 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../lib/restclient')
-const config = require('../config.json')
+const GlpiRestClient = require('../../lib/restclient');
+const config = require('../../config.json');
 
-const client = new GlpiRestClient(config.apirest)
-
-client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-	.then((res) => {
-		client.getGlpiConfig()
-			.then((res2) => {
-				console.log(res2)
-			})
-			.catch((err2) => {
-				console.log(err2)
-			})
-	})
-	.catch((err) => {
-		console.log(err)
-	})
+(async () => {
+	try {
+		const client = new GlpiRestClient(config.apirest);
+		const PasswordReset = await client.passwordReset(config.user.email, "yourToken", "yourNewPassword");
+		console.log(PasswordReset);
+	}
+	catch (err) {
+		console.log(err);
+	}
+})();

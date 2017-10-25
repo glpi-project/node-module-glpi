@@ -22,15 +22,20 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../lib/restclient')
-const config = require('../config.json')
+const GlpiRestClient = require('../../lib/restclient');
+const config = require('../../config.json');
+const itemtype = require('../../lib/itemtype');
 
-const client = new GlpiRestClient(config.apirest)
 
-client.resetPasswordRequest(config.user.name)
-	.then((res) => {
-		console.log(res)
-	})
-	.catch((err) => {
-		console.log(err)
-	})
+(async () => {
+	try {
+		const client = new GlpiRestClient(config.apirest);
+		await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken);
+		const ItemDelete = await client.deleteItem(itemtype.UserEmail, null, {id: 162, users_id: 40, email: 'example@email.com'});
+		console.log(ItemDelete);
+		await client.killSession();
+	}
+	catch (err) {
+		console.log(err);
+	}
+})();
