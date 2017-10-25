@@ -2,6 +2,7 @@
     "apirest": "http://example.com/glpi/apirest.php",
     "user": {
         "name": "exampleName",
+        "email": "exampleEmail",
         "password": "examplePassword",
         "userToken": "exampleUserToken"
     },
