@@ -3,7 +3,7 @@ layout: home
 ---
 ## Access to GLPI from Node.js
 
-This library created in Node is designed to make interacting with GLPI seamless and efficient. It provides you all the methods that belong to the GLPI REST API, easily to understand and therefore simplifying the access to GLPI.
+This li brary created in Node is designed to make interacting with GLPI seamless and efficient. It provides you all the methods that belong to the GLPI REST API, easily to understand and therefore simplifying the access to GLPI.
 
 ## Most outstanding features
 
