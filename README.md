@@ -103,7 +103,7 @@ See [the tags section of our GitHub project](https://github.com/glpi-project/nod
 ## Contact
 
 For notices about major changes and general discussion of GLPI development, subscribe to the [/r/glpi](http://www.reddit.com/r/glpi) subreddit.
-You can also chat with us via IRC in [#GLPI on freenode](http://webchat.freenode.net/?channels=GLPI]) or [@glpien on Telegram](https://t.me/glpien).
+You can also chat with us via IRC in [#GLPI on freenode](http://webchat.freenode.net/?channels=GLPI) or [@glpien on Telegram](https://t.me/glpien).
 
 ## Contribute
 
