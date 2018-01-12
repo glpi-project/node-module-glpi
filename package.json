@@ -1,5 +1,8 @@
 {
-  "author": "Thierry Bugier <tbugier@teclib.com>",
+  "contributors": [
+    "Thierry Bugier <tbugier@teclib.com>",
+    "Gianfranco Manganiello <gmanganiello@teclib.com>"
+  ],
   "name": "@teclib/glpi",
   "description": "API client for GLPI",
   "version": "0.1.0",
