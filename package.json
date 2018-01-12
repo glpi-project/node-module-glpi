@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/btry/node-module-glpi"
+    "url": "https://github.com/glpi-project/node-module-glpi.git"
   },
   "main": "./lib/restclient",
   "keywords": [
