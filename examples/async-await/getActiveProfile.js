@@ -22,7 +22,7 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../../lib/restclient')
+const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json');
 
 (async () => {
