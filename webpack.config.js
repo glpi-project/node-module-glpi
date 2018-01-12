@@ -2,9 +2,9 @@ var path = require('path')
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
-    entry: './lib/restclient.js',
+    entry: './src/restclient.js',
     output: {
-        path: path.resolve(__dirname, 'build'),
+        path: path.resolve(__dirname, 'lib'),
         filename: 'GlpiRestClient.js',
         library: 'GlpiRestClient',
         libraryTarget: 'umd'
