@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/glpi-project/node-module-glpi.git"
   },
-  "main": "./lib/restclient",
+  "main": "./lib/GlpiRestClient",
   "keywords": [
     "GLPI",
     "rest",
