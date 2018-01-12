@@ -1,4 +1,5 @@
 var path = require('path')
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
     entry: './lib/restclient.js',
@@ -24,6 +25,9 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new UglifyJsPlugin()
+    ],
     stats: {
         colors: true
     },
