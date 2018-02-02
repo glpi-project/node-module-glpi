@@ -22,9 +22,9 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
-const GlpiRestClient = require('../../lib/restclient')
+const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
-const itemtype = require('../../lib/itemtype')
+const itemtype = require('../../lib/GlpiRestClient').itemtype
 const GetAnItemQuery = require('../../lib/getAnItemQuery')
 
 const client = new GlpiRestClient(config.apirest)

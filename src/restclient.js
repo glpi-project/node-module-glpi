@@ -71,7 +71,7 @@ class GlpiRestClient {
         let bodyString = ''
 
         if (options) {
-            if (options.headers) headers = {...headers, ...options.headers}
+            if (options.headers) headers = { ...headers, ...options.headers }
             if (options['App-Token']) this.appToken = options['App-Token']
             if (options.input) {
                 bodyString = JSON.stringify(options)
@@ -593,10 +593,8 @@ class GlpiRestClient {
     resetPasswordRequest (email) {
         return new Promise((resolve, reject) => {
             try {
-                let options = {'lostPassword': {}}
-                if (email) {
-                    options.lostPassword = { 'email': email }
-                }
+                let options = {lostPassword: {'email': email}}
+
                 this._prepareRequest('PUT', 'lostPassword', options, (response, data) => {
                     const error = this._assessStatus(response.statusCode, data)
                     if (error) {

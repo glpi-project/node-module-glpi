@@ -25,13 +25,13 @@
 const assert = require('chai').assert
 const lint = require('mocha-eslint')
 
-const GlpiRestClient = require('../lib/restclient')
+const GlpiRestClient = require('../lib/GlpiRestClient').default
 const config = require('../config.json')
-const itemtype = require('../lib/itemtype')
+const itemtype = require('../lib/GlpiRestClient').itemtype
 
 const paths = [
     'test',
-    'lib',
+    'src',
     'examples'
 ]
 

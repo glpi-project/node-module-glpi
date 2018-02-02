@@ -1,14 +1,17 @@
 {
-  "author": "Thierry Bugier <tbugier@teclib.com>",
+  "contributors": [
+    "Thierry Bugier <tbugier@teclib.com>",
+    "Gianfranco Manganiello <gmanganiello@teclib.com>"
+  ],
   "name": "@teclib/glpi",
   "description": "API client for GLPI",
   "version": "0.1.0",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/btry/node-module-glpi"
+    "url": "https://github.com/glpi-project/node-module-glpi.git"
   },
-  "main": "./lib/restclient",
+  "main": "./lib/GlpiRestClient",
   "keywords": [
     "GLPI",
     "rest",
@@ -24,6 +27,11 @@
     "node": "*"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "chai": "^4.1.2",
     "eslint": "^4.9.0",
     "eslint-config-standard": "^10.2.1",
@@ -32,9 +40,13 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^5.0.0",
-    "mocha-eslint": "^4.1.0"
+    "mocha-eslint": "^4.1.0",
+    "uglifyjs-webpack-plugin": "^1.1.6",
+    "webpack": "^3.10.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "webpack",
+    "dev": "webpack --watch"
   }
 }

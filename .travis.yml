@@ -1,0 +1,13 @@
+sudo: required
+dist: trusty
+language: node_js
+node_js:
+  - "node"
+before_install:
+  - if [ $TRAVIS_PULL_REQUEST = false ]; then git checkout $TRAVIS_BRANCH; fi
+install:
+  - yarn install
+script:
+  - yarn build
+  - ci/create-config-file.sh
+  - yarn test
