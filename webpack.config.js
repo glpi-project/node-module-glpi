@@ -1,5 +1,5 @@
-let path = require('path')
-let UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const path = require('path')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
   entry: './src/index.js',
@@ -9,18 +9,19 @@ module.exports = {
     library: 'GlpiRestClient',
     libraryTarget: 'umd',
   },
+  mode: 'development',
   externals: [
     'url',
     'https',
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'stage-0'],
+          presets: ['@babel/preset-env'],
         },
       },
     ],
