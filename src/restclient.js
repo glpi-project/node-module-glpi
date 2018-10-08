@@ -33,10 +33,6 @@ class GlpiRestClient {
     this.appToken = ''
   }
 
-  get sessionToken() {
-    return this.sessionToken
-  }
-
   set sessionToken(sessionToken) {
     if (sessionToken) this.sessionToken = sessionToken
   }
@@ -78,6 +74,7 @@ class GlpiRestClient {
         headers = { ...headers, 'Content-Length': bodyString.length }
       }
       if (options.queryString) {
+        // eslint-disable-next-line
         for (const obj in options.queryString) {
           if (options.queryString[obj]) {
             requestOptions.searchParams.append(obj, options.queryString[obj])
@@ -137,8 +134,8 @@ class GlpiRestClient {
     return null
   }
 
-  static isNumber(o) {
-    return !isNaN(o - 0) && o !== null && o !== '' && o !== false
+  static isNumber(value) {
+    return !Number.isNaN(parseFloat(value))
   }
 
   initSessionByCredentials(user, password, appToken) {

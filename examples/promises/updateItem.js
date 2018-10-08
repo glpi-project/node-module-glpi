@@ -22,6 +22,8 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
 const { itemtype } = require('../../lib/GlpiRestClient')
@@ -29,7 +31,7 @@ const { itemtype } = require('../../lib/GlpiRestClient')
 const client = new GlpiRestClient(config.apirest)
 
 client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-  .then((res) => {
+  .then(() => {
     client.addItem(itemtype.UserEmail, { users_id: 37, email: 'example@email.com' })
       .then((res2) => {
         console.log(res2)

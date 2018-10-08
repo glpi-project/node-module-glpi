@@ -22,24 +22,22 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
-const { itemtype } = require('../../lib/GlpiRestClient')
-const GetAnItemQuery = require('../../lib/GetAnItemQuery');
+const { itemtype } = require('../../lib/GlpiRestClient');
 
-(async () => {
-  try {
-    const client = new GlpiRestClient(config.apirest)
-    const query = new GetAnItemQuery()
-    query.with_networkports = true
-    query.with_infocoms = true
-    query.with_contracts = true
-    query.with_documents = true
-    await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-    const Item = await client.getAnItem(itemtype.User, 40, query.createQueryObject())
-    console.log(Item)
-    await client.killSession()
-  } catch (err) {
-    console.log(err)
+(
+  async () => {
+    try {
+      const client = new GlpiRestClient(config.apirest)
+      await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+      const Item = await client.getAnItem(itemtype.User, 40)
+      console.log(Item)
+      await client.killSession()
+    } catch (err) {
+      console.log(err)
+    }
   }
-})()
+)()

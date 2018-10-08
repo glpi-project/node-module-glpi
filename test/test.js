@@ -23,24 +23,11 @@
 *  -------------------------------------------------------------------- */
 
 const { assert } = require('chai')
-const lint = require('mocha-eslint')
-
 const GlpiRestClient = require('../lib/GlpiRestClient').default
 const config = require('../config.json')
 const { itemtype } = require('../lib/GlpiRestClient')
 
-const paths = [
-  'test',
-  'src',
-  'examples',
-]
-
-const optionsLint = require('../.eslintrc')
-
-lint(paths, optionsLint)
-
 describe('initSessionByCredentials()', () => {
-  this.timeout(15000)
   it('successful login', async () => {
     const client = new GlpiRestClient(config.apirest)
     const result = await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -50,7 +37,6 @@ describe('initSessionByCredentials()', () => {
 })
 
 describe('initSessionByUserToken()', () => {
-  this.timeout(15000)
   it('successful login', async () => {
     const client = new GlpiRestClient(config.apirest)
     const result = await client.initSessionByUserToken(config.user.userToken)
@@ -60,7 +46,6 @@ describe('initSessionByUserToken()', () => {
 })
 
 describe('killSession()', () => {
-  this.timeout(15000)
   it('log out successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -70,7 +55,6 @@ describe('killSession()', () => {
 })
 
 describe('getMyProfiles()', () => {
-  this.timeout(15000)
   it('get my profiles successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -81,7 +65,6 @@ describe('getMyProfiles()', () => {
 })
 
 describe('getActiveProfile()', () => {
-  this.timeout(15000)
   it('get active profile successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -92,7 +75,6 @@ describe('getActiveProfile()', () => {
 })
 
 describe('getMyEntities()', () => {
-  this.timeout(15000)
   it('get my entities successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -103,7 +85,6 @@ describe('getMyEntities()', () => {
 })
 
 describe('getActiveEntities()', () => {
-  this.timeout(15000)
   it('get active entities successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -114,7 +95,6 @@ describe('getActiveEntities()', () => {
 })
 
 describe('getFullSession()', () => {
-  this.timeout(15000)
   it('get full session successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -125,7 +105,6 @@ describe('getFullSession()', () => {
 })
 
 describe('getGlpiConfig()', () => {
-  this.timeout(15000)
   it('get gpli configuration successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -136,7 +115,6 @@ describe('getGlpiConfig()', () => {
 })
 
 describe('getAllItems()', () => {
-  this.timeout(15000)
   it('get all items of a type successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -147,7 +125,6 @@ describe('getAllItems()', () => {
 })
 
 describe('getAnItem()', () => {
-  this.timeout(15000)
   it('get an item of a type successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -158,7 +135,6 @@ describe('getAnItem()', () => {
 })
 
 describe('getSubItems()', () => {
-  this.timeout(15000)
   it('get sub items successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -171,7 +147,6 @@ describe('getSubItems()', () => {
 let idItem = null
 
 describe('addItem()', () => {
-  this.timeout(15000)
   it('add item successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -183,7 +158,6 @@ describe('addItem()', () => {
 })
 
 describe('updateItem()', () => {
-  this.timeout(15000)
   it('update item successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -194,7 +168,6 @@ describe('updateItem()', () => {
 })
 
 describe('deleteItem()', () => {
-  this.timeout(15000)
   it('delete item successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -205,7 +178,6 @@ describe('deleteItem()', () => {
 })
 
 describe('changeActiveProfile()', () => {
-  this.timeout(15000)
   it('change active profile successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -217,7 +189,6 @@ describe('changeActiveProfile()', () => {
 })
 
 describe('changeActiveEntities()', () => {
-  this.timeout(15000)
   it('change active entities successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     await client.initSessionByCredentials(config.user.name, config.user.password)
@@ -228,7 +199,6 @@ describe('changeActiveEntities()', () => {
 })
 
 describe('resetPasswordRequest()', () => {
-  this.timeout(15000)
   it('reset password request successfully', async () => {
     const client = new GlpiRestClient(config.apirest)
     const result = await client.resetPasswordRequest(config.user.email)

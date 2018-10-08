@@ -22,13 +22,17 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json');
 
 (async () => {
   try {
     const client = new GlpiRestClient(config.apirest)
-    const Session = await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+    const Session = await client.initSessionByCredentials(
+      config.user.name, config.user.password, config.appToken,
+    )
     console.log(Session)
     await client.killSession()
   } catch (err) {

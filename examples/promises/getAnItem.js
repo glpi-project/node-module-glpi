@@ -22,22 +22,17 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
-const itemtype = require('../../lib/GlpiRestClient').itemtype
-const GetAnItemQuery = require('../../lib/getAnItemQuery')
+const { itemtype } = require('../../lib/GlpiRestClient')
 
 const client = new GlpiRestClient(config.apirest)
 
-const query = new GetAnItemQuery()
-query.with_networkports = true
-query.with_infocoms = true
-query.with_contracts = true
-query.with_documents = true
-
 client.initSessionByCredentials(config.user.name, config.user.password)
-  .then((res) => {
-    client.getAnItem(itemtype.User, 40, query.createQueryObject())
+  .then(() => {
+    client.getAnItem(itemtype.User, 40)
       .then((res2) => {
         console.log(res2)
         client.killSession()
