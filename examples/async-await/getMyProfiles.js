@@ -26,13 +26,13 @@ const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json');
 
 (async () => {
-    try {
-        const client = new GlpiRestClient(config.apirest)
-        await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-        const MyProfiles = await client.getMyProfiles()
-        console.log(MyProfiles)
-        await client.killSession()
-    } catch (err) {
-        console.log(err)
-    }
+  try {
+    const client = new GlpiRestClient(config.apirest)
+    await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+    const MyProfiles = await client.getMyProfiles()
+    console.log(MyProfiles)
+    await client.killSession()
+  } catch (err) {
+    console.log(err)
+  }
 })()

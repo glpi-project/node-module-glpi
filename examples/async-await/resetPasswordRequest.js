@@ -26,11 +26,11 @@ const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json');
 
 (async () => {
-    try {
-        const client = new GlpiRestClient(config.apirest)
-        const ResetPasswordRequest = await client.resetPasswordRequest(config.user.email)
-        console.log(ResetPasswordRequest)
-    } catch (err) {
-        console.log(err)
-    }
+  try {
+    const client = new GlpiRestClient(config.apirest)
+    const ResetPasswordRequest = await client.resetPasswordRequest(config.user.email)
+    console.log(ResetPasswordRequest)
+  } catch (err) {
+    console.log(err)
+  }
 })()

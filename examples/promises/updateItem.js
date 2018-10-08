@@ -24,31 +24,31 @@
 
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
-const itemtype = require('../../lib/GlpiRestClient').itemtype
+const { itemtype } = require('../../lib/GlpiRestClient')
 
 const client = new GlpiRestClient(config.apirest)
 
 client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-    .then((res) => {
-        client.addItem(itemtype.UserEmail, {users_id: 37, email: 'example@email.com'})
-            .then((res2) => {
-                console.log(res2)
-                client.updateItem(itemtype.UserEmail, null, {id: res2.data.id, users_id: 37, email: 'example2@email.com'})
-                    .then((res3) => {
-                        console.log(res3)
-                        client.killSession()
-                            .catch((err4) => {
-                                console.log(err4)
-                            })
-                    })
-                    .catch((err3) => {
-                        console.log(err3)
-                    })
-            })
-            .catch((err2) => {
-                console.log(err2)
-            })
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+  .then((res) => {
+    client.addItem(itemtype.UserEmail, { users_id: 37, email: 'example@email.com' })
+      .then((res2) => {
+        console.log(res2)
+        client.updateItem(itemtype.UserEmail, null, { id: res2.data.id, users_id: 37, email: 'example2@email.com' })
+          .then((res3) => {
+            console.log(res3)
+            client.killSession()
+              .catch((err4) => {
+                console.log(err4)
+              })
+          })
+          .catch((err3) => {
+            console.log(err3)
+          })
+      })
+      .catch((err2) => {
+        console.log(err2)
+      })
+  })
+  .catch((err) => {
+    console.log(err)
+  })
