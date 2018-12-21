@@ -1,7 +1,8 @@
 {
   "contributors": [
     "Thierry Bugier <tbugier@teclib.com>",
-    "Gianfranco Manganiello <gmanganiello@teclib.com>"
+    "Gianfranco Manganiello <gmanganiello@teclib.com>",
+    "Alexander Salas Bastidas <asalas@teclib.com>"
   ],
   "name": "@teclib/glpi",
   "description": "API client for GLPI",
@@ -22,27 +23,33 @@
   "bin": {
     "glpi-api": "./bin/glpi-api"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "engines": {
     "node": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^8.0.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "chai": "^4.2.0",
-    "eslint": "^5.6.1",
-    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint": "^5.10.0",
+    "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
+    "mocha-eslint": "^5.0.0",
     "uglifyjs-webpack-plugin": "^2.0.1",
-    "webpack": "^4.20.2",
+    "webpack": "^4.28.1",
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
-    "test": "mocha --timeout 20000",
+    "test": "mocha",
     "build": "webpack",
-    "dev": "webpack --watch",
-    "lint": "eslint src/**/*.js examples/**/*.js test/**/*.js"
+    "dev": "webpack --watch"
   }
 }
