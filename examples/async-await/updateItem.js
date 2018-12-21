@@ -22,18 +22,20 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
-const itemtype = require('../../lib/GlpiRestClient').itemtype;
+const { itemtype } = require('../../lib/GlpiRestClient');
 
 (async () => {
-    try {
-        const client = new GlpiRestClient(config.apirest)
-        await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-        const Item = await client.updateItem(itemtype.UserEmail, null, [{id: 169, email: 'exam@email.com'}, {id: 170, email: 'exam2@email.com'}])
-        console.log(Item)
-        await client.killSession()
-    } catch (err) {
-        console.log(err)
-    }
+  try {
+    const client = new GlpiRestClient(config.apirest)
+    await client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
+    const Item = await client.updateItem(itemtype.UserEmail, null, [{ id: 169, email: 'exam@email.com' }, { id: 170, email: 'exam2@email.com' }])
+    console.log(Item)
+    await client.killSession()
+  } catch (err) {
+    console.log(err)
+  }
 })()

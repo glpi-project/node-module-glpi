@@ -23,621 +23,606 @@
 *  -------------------------------------------------------------------- */
 
 const HTTPS = require('https')
-const URL = require('url').URL
+const { URL } = require('url')
 const ITEMTYPE = require('./itemtype')
 
 class GlpiRestClient {
-    constructor (url) {
-        this._url = url
-        this._sessionToken = ''
-        this._appToken = ''
+  constructor(url) {
+    this.url = url
+    this.sessionToken = ''
+    this.appToken = ''
+  }
+
+  set sessionToken(sessionToken) {
+    if (sessionToken) this.sessionToken = sessionToken
+  }
+
+  set appToken(appToken) {
+    if (appToken) this.appToken = appToken
+  }
+
+  prepareRequest(method, endpoint, options, responseHandler) {
+    // Prepare options of the request
+    const requestOptions = new URL(this.url)
+    requestOptions.pathname += `/${endpoint}`
+
+    let headers = {
+      'Content-Type': 'application/json',
+      'Session-Token': this.sessionToken,
+      'App-Token': this.appToken,
     }
 
-    get url () {
-        return this._url
-    }
+    let bodyString = ''
 
-    set url (url) {
-        this._url = url
-    }
-
-    get sessionToken () {
-        return this._sessionToken
-    }
-
-    set sessionToken (sessionToken) {
-        if (sessionToken) this._sessionToken = sessionToken
-    }
-
-    get appToken () {
-        return this._appToken
-    }
-
-    set appToken (appToken) {
-        if (appToken) this._appToken = appToken
-    }
-
-    _prepareRequest (method, endpoint, options, responseHandler) {
-        // Prepare options of the request
-        let requestOptions = new URL(this._url)
-        requestOptions.pathname += `/${endpoint}`
-
-        let headers = {
-            'Content-Type': 'application/json',
-            'Session-Token': this.sessionToken,
-            'App-Token': this.appToken
+    if (options) {
+      if (options.headers) headers = { ...headers, ...options.headers }
+      if (options['App-Token']) this.appToken = options['App-Token']
+      if (options.input) {
+        bodyString = JSON.stringify(options)
+        headers = { ...headers, 'Content-Length': bodyString.length }
+      }
+      if (options.profiles_id) {
+        bodyString = JSON.stringify(options)
+        headers = { ...headers, 'Content-Length': bodyString.length }
+      }
+      if (options.activeEntities) {
+        bodyString = JSON.stringify(options.activeEntities)
+        headers = { ...headers, 'Content-Length': bodyString.length }
+      }
+      if (options.lostPassword) {
+        bodyString = JSON.stringify(options.lostPassword)
+        headers = { ...headers, 'Content-Length': bodyString.length }
+      }
+      if (options.queryString) {
+        // eslint-disable-next-line
+        for (const obj in options.queryString) {
+          if (options.queryString[obj]) {
+            requestOptions.searchParams.append(obj, options.queryString[obj])
+          }
         }
+      }
+    }
 
-        let bodyString = ''
+    const requestData = {
+      hostname: requestOptions.hostname,
+      port: 443,
+      path: requestOptions.pathname + requestOptions.search,
+      method,
+      headers,
+    }
 
-        if (options) {
-            if (options.headers) headers = { ...headers, ...options.headers }
-            if (options['App-Token']) this.appToken = options['App-Token']
-            if (options.input) {
-                bodyString = JSON.stringify(options)
-                headers = {...headers, 'Content-Length': bodyString.length}
-            }
-            if (options.profiles_id) {
-                bodyString = JSON.stringify(options)
-                headers = {...headers, 'Content-Length': bodyString.length}
-            }
-            if (options.activeEntities) {
-                bodyString = JSON.stringify(options.activeEntities)
-                headers = {...headers, 'Content-Length': bodyString.length}
-            }
-            if (options.lostPassword) {
-                bodyString = JSON.stringify(options.lostPassword)
-                headers = {...headers, 'Content-Length': bodyString.length}
-            }
-            if (options.queryString) {
-                for (let obj in options.queryString) {
-                    if (options.queryString[obj]) {
-                        requestOptions.searchParams.append(obj, options.queryString[obj])
-                    }
-                }
-            }
+    const req = HTTPS.request(requestData, (resp) => {
+      let data = ''
+
+      // A chunk of data has been recieved.
+      resp.on('data', (chunk) => {
+        data += chunk
+      })
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        responseHandler(resp, data)
+      })
+    })
+
+    req.on('error', () => {})
+    req.write(bodyString)
+
+    return req
+  }
+
+  static requestException(status, data) {
+    return ({
+      status,
+      data: {
+        ...data,
+      },
+    })
+  }
+
+  static assessStatus(status, data) {
+    if (status >= 400 && status < 600) {
+      if (status < 500) {
+        return GlpiRestClient.requestException(status, {
+          codeError: JSON.parse(data)[0],
+          messageError: JSON.parse(data)[1],
+        })
+      }
+      return GlpiRestClient.requestException(status, JSON.parse(data))
+    }
+
+    return null
+  }
+
+  static isNumber(value) {
+    return !Number.isNaN(parseFloat(value))
+  }
+
+  initSessionByCredentials(user, password, appToken) {
+    return new Promise((resolve, reject) => {
+      try {
+        const options = {
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${user}:${password}`).toString('base64')}`,
+          },
         }
-
-        const requestData = {
-            'hostname': requestOptions.hostname,
-            'port': 443,
-            'path': requestOptions.pathname + requestOptions.search,
-            'method': method,
-            'headers': headers
+        if (appToken) {
+          options.headers = {
+            ...options.headers,
+            'App-Token': appToken,
+          }
         }
-
-        const req = HTTPS.request(requestData, (resp) => {
-            let data = ''
-
-            // A chunk of data has been recieved.
-            resp.on('data', (chunk) => {
-                data += chunk
+        this.prepareRequest('GET', 'initSession', options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            this.sessionToken = JSON.parse(data).session_token
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
             })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-            // The whole response has been received. Print out the result.
-            resp.on('end', () => {
-                responseHandler(resp, data)
-            })
-        })
-
-        req.on('error', () => {})
-        req.write(bodyString)
-
-        return req
-    }
-
-    _requestException (status, data) {
-        return ({
-            status,
-            data: {
-                ...data
-            }
-        })
-    }
-
-    _assessStatus (status, data) {
-        if (status >= 400 && status < 600) {
-            if (status >= 400 && status < 500) {
-                return this._requestException(status, {
-                    codeError: JSON.parse(data)[0],
-                    messageError: JSON.parse(data)[1]
-                })
-            }
-            return this._requestException(status, JSON.parse(data))
+  initSessionByUserToken(userToken, appToken) {
+    return new Promise((resolve, reject) => {
+      try {
+        const options = {
+          headers: {
+            Authorization: `user_token ${userToken}`,
+          },
         }
-    }
+        if (appToken) {
+          options.headers = {
+            ...options.headers,
+            'App-Token': appToken,
+          }
+        }
+        this.prepareRequest('GET', 'initSession', options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            this.sessionToken = JSON.parse(data).session_token
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    _isNumber (o) {
-        return !isNaN(o - 0) && o !== null && o !== '' && o !== false
-    }
+  killSession() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'killSession', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            this.sessionToken = ''
+            resolve({
+              status: response.statusCode,
+              data: {
+                message: 'User logout successfully',
+              },
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    initSessionByCredentials (user, password, appToken) {
-        return new Promise((resolve, reject) => {
-            try {
-                let options = {
-                    'headers': {
-                        'Authorization': 'Basic ' + Buffer.from(user + ':' + password).toString('base64')
-                    }
-                }
-                if (appToken) {
-                    options.headers = {
-                        ...options.headers,
-                        'App-Token': appToken
-                    }
-                }
-                this._prepareRequest('GET', 'initSession', options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        this.sessionToken = JSON.parse(data).session_token
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getMyProfiles() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'getMyProfiles', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data).myprofiles,
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    initSessionByUserToken (userToken, appToken) {
-        return new Promise((resolve, reject) => {
-            try {
-                let options = {
-                    'headers': {
-                        'Authorization': `user_token ${userToken}`
-                    }
-                }
-                if (appToken) {
-                    options.headers = {
-                        ...options.headers,
-                        'App-Token': appToken
-                    }
-                }
-                this._prepareRequest('GET', 'initSession', options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        this.sessionToken = JSON.parse(data).session_token
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getActiveProfile() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'getActiveProfile', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data).active_profile,
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    killSession () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'killSession', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        this.sessionToken = ''
-                        resolve({
-                            status: response.statusCode,
-                            data: {
-                                message: 'User logout successfully'
-                            }
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getMyEntities() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'getMyEntities', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data).myentities,
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getMyProfiles () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'getMyProfiles', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data).myprofiles
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getActiveEntities() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'getActiveEntities', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getActiveProfile () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'getActiveProfile', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data).active_profile
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getFullSession() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'getFullSession', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getMyEntities () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'getMyEntities', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data).myentities
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getGlpiConfig() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.prepareRequest('GET', 'getGlpiConfig', null, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getActiveEntities () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'getActiveEntities', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getAllItems(itemtype, queryString) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!itemtype) throw GlpiRestClient.requestException(400, 'Invalid itemtype')
+        if (itemtype !== ITEMTYPE[itemtype.name]) throw GlpiRestClient.requestException(400, 'Invalid itemtype')
+        let options = null
+        if (queryString) options = { queryString }
+        this.prepareRequest('GET', itemtype.name, options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getFullSession () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'getFullSession', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getAnItem(itemtype, id, queryString) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!itemtype) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (itemtype !== ITEMTYPE[itemtype.name]) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (!GlpiRestClient.isNumber(id)) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+        if (id < 0) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+        let options = null
+        if (queryString) options = { queryString }
+        const endpoint = `${itemtype.name}/${id}`
+        this.prepareRequest('GET', endpoint, options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getGlpiConfig () {
-        return new Promise((resolve, reject) => {
-            try {
-                this._prepareRequest('GET', 'getGlpiConfig', null, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  getSubItems(itemtype, id, subItemtype, queryString) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!itemtype) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (itemtype !== ITEMTYPE[itemtype.name]) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (!subItemtype) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid sub itemtype' })
+        if (subItemtype !== ITEMTYPE[subItemtype.name]) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid sub itemtype' })
+        if (!GlpiRestClient.isNumber(id)) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+        if (id < 0) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+        let options = null
+        if (queryString) options = { queryString }
+        const endpoint = `${itemtype.name}/${id}/${subItemtype.name}`
+        this.prepareRequest('GET', endpoint, options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getAllItems (itemtype, queryString) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!itemtype) throw this._requestException(400, 'Invalid itemtype')
-                if (itemtype !== ITEMTYPE[itemtype.name]) throw this._requestException(400, 'Invalid itemtype')
-                let options = null
-                if (queryString) options = { queryString }
-                this._prepareRequest('GET', itemtype.name, options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  addItem(itemtype, input) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!itemtype) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (itemtype !== ITEMTYPE[itemtype.name]) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        const options = { input }
+        const endpoint = itemtype.name
+        this.prepareRequest('POST', endpoint, options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getAnItem (itemtype, id, queryString) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!itemtype) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (itemtype !== ITEMTYPE[itemtype.name]) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (!this._isNumber(id)) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                if (id < 0) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                let options = null
-                if (queryString) options = { queryString }
-                const endpoint = `${itemtype.name}/${id}`
-                this._prepareRequest('GET', endpoint, options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  deleteItem(itemtype, id, input, queryString) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!itemtype) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (itemtype !== ITEMTYPE[itemtype.name]) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        let options = {}
+        if (queryString) options = { queryString }
+        let endpoint = itemtype.name
+        if (!id) {
+          if (!input) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid input' })
+          options = { ...options, input }
+        } else {
+          if (!GlpiRestClient.isNumber(id)) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+          if (id < 0) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+          endpoint += `/${id}`
+        }
+        this.prepareRequest('DELETE', endpoint, options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    getSubItems (itemtype, id, subItemtype, queryString) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!itemtype) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (itemtype !== ITEMTYPE[itemtype.name]) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (!subItemtype) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid sub itemtype'})
-                if (subItemtype !== ITEMTYPE[subItemtype.name]) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid sub itemtype'})
-                if (!this._isNumber(id)) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                if (id < 0) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                let options = null
-                if (queryString) options = { queryString }
-                const endpoint = `${itemtype.name}/${id}/${subItemtype.name}`
-                this._prepareRequest('GET', endpoint, options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  updateItem(itemtype, id, input) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!itemtype) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        if (itemtype !== ITEMTYPE[itemtype.name]) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid itemtype' })
+        let options = ''
+        let endpoint = itemtype.name
+        if (!id) {
+          if (!input) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid input' })
+          options = { input }
+        } else {
+          if (!GlpiRestClient.isNumber(id)) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+          if (id < 0) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+          endpoint += `/${id}`
+        }
+        this.prepareRequest('PUT', endpoint, options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data),
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    addItem (itemtype, input) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!itemtype) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (itemtype !== ITEMTYPE[itemtype.name]) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                const options = { input }
-                const endpoint = itemtype.name
-                this._prepareRequest('POST', endpoint, options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  changeActiveProfile(id) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!GlpiRestClient.isNumber(id)) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+        if (id < 0) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid id' })
+        const options = { profiles_id: id }
+        this.prepareRequest('POTS', 'changeActiveProfile', options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: { message: 'Active profile successfully changed' },
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    deleteItem (itemtype, id, input, queryString) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!itemtype) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (itemtype !== ITEMTYPE[itemtype.name]) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                let options = {}
-                if (queryString) options = { queryString }
-                let endpoint = itemtype.name
-                if (!id) {
-                    if (!input) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid input'})
-                    options = { ...options, input }
-                } else {
-                    if (!this._isNumber(id)) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                    if (id < 0) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                    endpoint += `/${id}`
-                }
-                this._prepareRequest('DELETE', endpoint, options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  changeActiveEntities(entitiesId, isRecursive) {
+    return new Promise((resolve, reject) => {
+      try {
+        let options = { activeEntities: {} }
+        if (entitiesId) {
+          if (!GlpiRestClient.isNumber(entitiesId)) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid entities_id' })
+          if (entitiesId < 0) throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid entities_id' })
+          options = { activeEntities: entitiesId }
+        }
+        if (isRecursive) {
+          if (typeof (isRecursive) === 'boolean') {
+            options = { activeEntities: { ...options.activeEntities, is_recursive: isRecursive } }
+          } else {
+            throw GlpiRestClient.requestException(400, { errorCode: '', errorMessage: 'Invalid is_recursive' })
+          }
+        }
+        this.prepareRequest('POTS', 'changeActiveEntities', options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else if (data) {
+            resolve({
+              status: response.statusCode,
+              data: { message: 'Active entities successfully changed' },
+            })
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: { message: 'Failed to change active entities' },
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    updateItem (itemtype, id, input) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!itemtype) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                if (itemtype !== ITEMTYPE[itemtype.name]) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid itemtype'})
-                let options = ''
-                let endpoint = itemtype.name
-                if (!id) {
-                    if (!input) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid input'})
-                    options = { input }
-                } else {
-                    if (!this._isNumber(id)) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                    if (id < 0) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                    endpoint += `/${id}`
-                }
-                this._prepareRequest('PUT', endpoint, options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  resetPasswordRequest(email) {
+    return new Promise((resolve, reject) => {
+      try {
+        const options = { lostPassword: { email } }
 
-    changeActiveProfile (id) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!this._isNumber(id)) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                if (id < 0) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid id'})
-                const options = { 'profiles_id': id }
-                this._prepareRequest('POTS', 'changeActiveProfile', options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: {'message': 'Active profile successfully changed'}
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+        this.prepareRequest('PUT', 'lostPassword', options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data)[0],
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 
-    changeActiveEntities (entitiesId, isRecursive) {
-        return new Promise((resolve, reject) => {
-            try {
-                let options = {'activeEntities': {}}
-                if (entitiesId) {
-                    if (!this._isNumber(entitiesId)) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid entities_id'})
-                    if (entitiesId < 0) throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid entities_id'})
-                    options = {'activeEntities': entitiesId}
-                }
-                if (isRecursive) {
-                    if (typeof (isRecursive) === 'boolean') {
-                        options = {'activeEntities': {...options.activeEntities, is_recursive: isRecursive}}
-                    } else {
-                        throw this._requestException(400, {errorCode: '', errorMessage: 'Invalid is_recursive'})
-                    }
-                }
-                this._prepareRequest('POTS', 'changeActiveEntities', options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        if (data) {
-                            resolve({
-                                status: response.statusCode,
-                                data: {'message': 'Active entities successfully changed'}
-                            })
-                        } else {
-                            resolve({
-                                status: response.statusCode,
-                                data: {'message': 'Failed to change active entities'}
-                            })
-                        }
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
-
-    resetPasswordRequest (email) {
-        return new Promise((resolve, reject) => {
-            try {
-                let options = {lostPassword: {'email': email}}
-
-                this._prepareRequest('PUT', 'lostPassword', options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)[0]
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
-
-    passwordReset (email, passwordForgetToken, password) {
-        return new Promise((resolve, reject) => {
-            try {
-                const options = {
-                    'lostPassword': {
-                        'email': email,
-                        'password_forget_token': passwordForgetToken,
-                        'password': password
-                    }
-                }
-                this._prepareRequest('PUT', 'lostPassword', options, (response, data) => {
-                    const error = this._assessStatus(response.statusCode, data)
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve({
-                            status: response.statusCode,
-                            data: JSON.parse(data)[0]
-                        })
-                    }
-                }).end()
-            } catch (err) {
-                reject(err)
-            }
-        })
-    }
+  passwordReset(email, passwordForgetToken, password) {
+    return new Promise((resolve, reject) => {
+      try {
+        const options = {
+          lostPassword: {
+            email,
+            password_forget_token: passwordForgetToken,
+            password,
+          },
+        }
+        this.prepareRequest('PUT', 'lostPassword', options, (response, data) => {
+          const error = GlpiRestClient.assessStatus(response.statusCode, data)
+          if (error) {
+            reject(error)
+          } else {
+            resolve({
+              status: response.statusCode,
+              data: JSON.parse(data)[0],
+            })
+          }
+        }).end()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 }
 
 module.exports = GlpiRestClient

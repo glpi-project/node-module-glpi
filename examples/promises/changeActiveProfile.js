@@ -22,31 +22,33 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json')
 
 const client = new GlpiRestClient(config.apirest)
 
 client.initSessionByCredentials(config.user.name, config.user.password, config.appToken)
-    .then((res) => {
-        client.getMyProfiles()
-            .then((res2) => {
-                client.changeActiveProfile(res2.data[0].id)
-                    .then((res3) => {
-                        console.log(res3)
-                        client.killSession()
-                            .catch((err4) => {
-                                console.log(err4)
-                            })
-                    })
-                    .catch((err3) => {
-                        console.log(err3)
-                    })
-            })
-            .catch((err2) => {
-                console.log(err2)
-            })
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+  .then(() => {
+    client.getMyProfiles()
+      .then((res2) => {
+        client.changeActiveProfile(res2.data[0].id)
+          .then((res3) => {
+            console.log(res3)
+            client.killSession()
+              .catch((err4) => {
+                console.log(err4)
+              })
+          })
+          .catch((err3) => {
+            console.log(err3)
+          })
+      })
+      .catch((err2) => {
+        console.log(err2)
+      })
+  })
+  .catch((err) => {
+    console.log(err)
+  })

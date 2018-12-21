@@ -1,11 +1,10 @@
 module.exports = {
-    "extends": "standard",
+    "extends": "airbnb-base",
     "rules": {
-        "indent": ["error", 4],
-        "camelcase": 0
+        "semi": ["error", "never"]
     },
     "env": {
         "mocha": true,
         "node": true
     }
-};
+}

@@ -27,5 +27,5 @@ import itemtype from './itemtype'
 
 export default restclient
 export {
-    itemtype
+  itemtype,
 }

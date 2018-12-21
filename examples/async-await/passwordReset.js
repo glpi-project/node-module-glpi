@@ -22,15 +22,17 @@
 *  @link      http://www.glpi-project.org/
 *  -------------------------------------------------------------------- */
 
+/* eslint no-console: 0 */
+
 const GlpiRestClient = require('../../lib/GlpiRestClient').default
 const config = require('../../config.json');
 
 (async () => {
-    try {
-        const client = new GlpiRestClient(config.apirest)
-        const PasswordReset = await client.passwordReset(config.user.email, 'yourToken', 'yourNewPassword')
-        console.log(PasswordReset)
-    } catch (err) {
-        console.log(err)
-    }
+  try {
+    const client = new GlpiRestClient(config.apirest)
+    const PasswordReset = await client.passwordReset(config.user.email, 'yourToken', 'yourNewPassword')
+    console.log(PasswordReset)
+  } catch (err) {
+    console.log(err)
+  }
 })()
