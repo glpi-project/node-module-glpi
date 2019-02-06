@@ -44,7 +44,7 @@
     "mocha": "^5.2.0",
     "mocha-eslint": "^5.0.0",
     "uglifyjs-webpack-plugin": "^2.0.1",
-    "webpack": "^4.28.1",
+    "webpack": "^4.29.2",
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
